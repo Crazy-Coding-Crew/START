@@ -52,7 +52,7 @@ $(ODBDIR)/%-odb.cxx: $(HLIST)
 
 bin/updateDB: $(OBJLIST)
 	@mkdir -p $(BINDIR)
-	@$(C++) $(CXXFLAGS) -lodb-pgsql -lodb $^ -o $@
+	@$(C++) $(CXXFLAGS) -lboost_program_options -lodb-pgsql -lodb $^ -o $@
 
 .PHONY: clean
 clean:

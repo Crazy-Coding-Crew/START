@@ -1,8 +1,10 @@
 // STL include(s)
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <memory>
+
+// BOOST include(s)
+#include <boost/program_options.hpp>
 
 // ODB includes
 #include <odb/database.hxx>
@@ -16,6 +18,31 @@
 
 int main(int argc,char* argv[])
 {
+  // command line options
+  namespace po = boost::program_options;
+  po::options_description desc("options");
+  desc.add_options()
+    ("help,h","print usage")
+    ("dbname,d",po::value<std::string>()->default_value("START")->required(),"name of postgreSQL database")
+    ("user,u",po::value<std::string>()->required(),"user name for access to the postgreSQL database");
+
+  try
+  {
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc,argv,desc),vm);
+
+    if(vm.count("help"))
+    {
+      std::cout << desc << std::endl;
+      return 0;
+    }
+  
+    po::notify(vm);
+  }
+  catch(po::error& e)
+  {
+  }
+  
   // open database
   std::unique_ptr<odb::core::database> db(new odb::pgsql::database("christian","","START_test"));
 
