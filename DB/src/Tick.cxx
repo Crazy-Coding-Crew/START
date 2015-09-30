@@ -6,7 +6,8 @@
 
 namespace START
 {
-  Tick::Tick(float fOpen,float fHigh,float fLow,float fClose,unsigned long int iVolume):
+  Tick::Tick(const std::string& sDate,float fOpen,float fHigh,float fLow,float fClose,unsigned long int iVolume):
+    m_sDate(sDate),
     m_fOpen(fOpen),
     m_fHigh(fHigh),
     m_fLow(fLow),
@@ -21,6 +22,11 @@ namespace START
     m_fClose(0),
     m_iVolume(0)
   {}
+
+  std::string Tick::date() const
+  {
+    return m_sDate;
+  }
   
   float Tick::open() const
   {
@@ -49,6 +55,6 @@ namespace START
 
   const Tick Tick::operator+(const Tick& rOther) const
   {
-    return Tick(m_fOpen,std::max(m_fHigh,rOther.m_fHigh),std::min(m_fLow,rOther.m_fLow),m_fClose,m_iVolume + rOther.m_iVolume);
+    return Tick(m_sDate,m_fOpen,std::max(m_fHigh,rOther.m_fHigh),std::min(m_fLow,rOther.m_fLow),m_fClose,m_iVolume + rOther.m_iVolume);
   }
 } // end of namespace
