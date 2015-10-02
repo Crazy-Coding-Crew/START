@@ -24,11 +24,14 @@ int main(int argc,char* argv[])
   desc.add_options()
     ("help,h","print usage")
     ("dbname,d",po::value<std::string>()->default_value("START")->required(),"name of postgreSQL database")
-    ("user,u",po::value<std::string>()->required(),"user name for access to the postgreSQL database");
+    ("user,u",po::value<std::string>()->required(),"user name for access to the postgreSQL database")
+    ("ISIN",po::value<std::string>()->required(),"ISIN of stock market asset")
+    ("file,f",po::value<std::string>()->required(),"input file with tick data");
 
+  // read command line options into map
+  po::variables_map vm;
   try
   {
-    po::variables_map vm;
     po::store(po::parse_command_line(argc,argv,desc),vm);
 
     if(vm.count("help"))
@@ -41,16 +44,20 @@ int main(int argc,char* argv[])
   }
   catch(po::error& e)
   {
+    std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
+    std::cerr << desc << std::endl;
+
+    return 1;
   }
-  
+
   // open database
-  std::unique_ptr<odb::core::database> db(new odb::pgsql::database("christian","","START_test"));
+  std::unique_ptr<odb::core::database> db(new odb::pgsql::database(vm["user"].as<std::string>(),"",vm["dbname"].as<std::string>()));
 
   // create example Share
-  START::Share share("TestShare");
+  START::Share share(vm["ISIN"].as<std::string>());
   
   // read input file
-  std::ifstream infile(argv[1]);
+  std::ifstream infile(vm["file"].as<std::string>());
   std::string sDate;
   float fOpen, fHigh, fLow, fClose;
   unsigned long int iVolume;
@@ -64,9 +71,15 @@ int main(int argc,char* argv[])
   {
     odb::core::transaction t(db->begin());
     if(db->find<START::Share>(share.ISIN()))
-       db->update(share);
+    {
+      std::cout << "updating" << std::endl;
+      db->update(share);
+    }
     else
+    {
+      std::cout << "inserting" << std::endl;
       db->persist(share);
+    }
     t.commit();
   }
   catch (const odb::exception& e)

@@ -1,3 +1,7 @@
+def updateDB(filename):
+    import os
+    os.system("./bin/updateDB --user christian --dbname START_test --ISIN SecondTest -f %s" % filename)
+    
 def downloadData(symbol):
     import urllib2,tempfile
     response = urllib2.urlopen("http://www.google.com/finance/historical?q=%s&output=csv" % symbol)
@@ -18,3 +22,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     tempFile = downloadData(args.symbol)
+    updateDB(tempFile)
