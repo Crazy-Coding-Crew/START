@@ -1,6 +1,6 @@
-def updateDB(filename):
+def updateDB(filename,symbol,user,dbname):
     import os
-    os.system("./bin/updateDB --user christian --dbname START_test --ISIN SecondTest -f %s" % filename)
+    os.system("../bin/updateDB --user %s --dbname %s --ISIN %s -f %s" % (user,dbname,symbol,filename))
     
 def downloadData(symbol):
     import urllib2,tempfile
@@ -19,7 +19,9 @@ if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser(description="update START DB with historical stock market data from finance.yahoo.com")
     parser.add_argument("symbol",type=str,help="symbol of the stock")
+    parser.add_argument("-u","--user",type=str,required=True,help="database user")
+    parser.add_argument("-d","--dbname",type=str,required=True,help="database name")
 
     args = parser.parse_args()
     tempFile = downloadData(args.symbol)
-    updateDB(tempFile)
+    updateDB(tempFile,args.symbol,args.user,args.dbname)
