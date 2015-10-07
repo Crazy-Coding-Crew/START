@@ -26,6 +26,11 @@ namespace START
     m_lTicks.push_back(rTick);
   }
 
+  const std::list<Tick>& Share::getTicks() const
+  {
+    return m_lTicks;
+  }
+
   void Share::print() const
   {
     std::cout << "ISIN: " << m_sISIN << std::endl;

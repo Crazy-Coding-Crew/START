@@ -21,7 +21,8 @@ namespace START
     
     const std::string& ISIN() const;
     void addTick(const Tick& rTick);
-
+    const std::list<Tick>& getTicks() const;
+    
     void print() const;
     
   private:
