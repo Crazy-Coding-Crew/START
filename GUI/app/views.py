@@ -1,6 +1,7 @@
-from flask import render_template,Response
+from flask import render_template,Response,request
 import json
 from app import app
+import Start
 
 @app.route('/')
 @app.route('/index')
@@ -9,8 +10,15 @@ def index():
 
 @app.route('/update')
 def update():
-        r = {"data":[[2,3,1,2],[3,4,2,3]]}
-        print r
+        ISIN = request.args.get("ISIN","",type=str)
+        if not ISIN:
+                print "Error"
+        r = {'data' :Start.getShare(ISIN),'name': ISIN}
         result = Response(json.dumps(r),mimetype='application/json')
-        print result
+        return result
+
+@app.route('/shares')
+def getListOfShares():
+        r = Start.getListOfISINs()
+        result = Response(json.dumps(r),mimetype='application/json')
         return result
