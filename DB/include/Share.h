@@ -9,16 +9,18 @@
 #include <odb/core.hxx>
 
 // START include(s)
+#include "DBObject.h"
 #include "Tick.h"
 
 namespace START
 {
   #pragma db object
-  class Share
+  class Share : public DBObject
   {
   public:
     explicit Share(const std::string& sISIN);
     
+    virtual bool acceptWriter(const DBWriter& writer) const override;
     const std::string& ISIN() const;
     void addTick(const Tick& rTick);
     const std::list<Tick>& getTicks() const;

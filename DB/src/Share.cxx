@@ -2,19 +2,27 @@
 #include <iostream>
 
 // START include(s)
-#include <Share.h>
+#include "DBWriter.h"
+#include "Share.h"
 
 namespace START
 {
   Share::Share(const std::string& sISIN):
+    DBObject(),
     m_sISIN(sISIN),
     m_lTicks()
   {}
 
   Share::Share():
+    DBObject(),
     m_sISIN(),
     m_lTicks()
   {}
+
+  bool Share::acceptWriter(const DBWriter& writer) const
+  {
+    return writer.write(*this);
+  }
 
   const std::string& Share::ISIN() const
   {
