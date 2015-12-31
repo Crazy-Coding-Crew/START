@@ -1,3 +1,6 @@
+// STL include(s)
+#include <cstddef>
+
 // ODB includes
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
@@ -5,6 +8,7 @@
 
 // START include(s)
 #include "Database.h"
+#include "DBWriter.h"
 #include "Share.h"
 #include "Share-odb.h"
 
@@ -19,6 +23,11 @@ namespace START
 
   Database::~Database()
   {}
+
+  bool Database::write(const DBObject& obj)
+  {
+    return obj.acceptWriter(*m_pDBWriter);
+  }
 
   std::vector<std::string> Database::getListOfISINs() const
   {
@@ -47,6 +56,7 @@ namespace START
   }
   
   Database::Database(const std::string& sUser,const std::string& sDBName):
+    m_pDBWriter(nullptr),
     m_pDatabase(new odb::pgsql::database(sUser,"",sDBName))
   {}
 
