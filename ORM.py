@@ -36,6 +36,16 @@ def required_keywords(*keywords):
         return func_wrapper
     return decorator_generator
 
+class CurrencyMixin:
+    known_currencies = set(['EUR','USD','CHF'])
+    currency  = Column(String(3))
+        
+    @validates('currency')
+    def validate_currency(self,key,currency):
+        currency = currency.upper()
+        assert currency in CurrencyMixin.known_currencies
+        return currency
+            
 class User(Base):
     __tablename__ = 'users'
 
@@ -51,13 +61,12 @@ class User(Base):
     def __repr__(self):
         return "<User(ID=%s, name='%s %s', birthday=%s)>" % (str(self.id), self.first_name, self.last_name,str(self.birthday))
 
-class Depot(Base):
+class Depot(Base,CurrencyMixin):
     __tablename__ = 'depots'
 
     id        = Column(Integer, primary_key=True)
     account   = Column(String(19))
     institute = Column(String(50))
-    currency  = Column(String(3))
     user_id   = Column(Integer, ForeignKey('users.id'))
     
     user = relationship("User", back_populates="depots")
@@ -77,15 +86,9 @@ class Depot(Base):
         assert account_format.match(account)
         return account
 
-    @validates('currencies')
-    def validate_currency(self,key,currency):
-        known_currencies = set(['EUR','USD','CHF'])
-        assert currency in known_currencies
-        return currency
-            
 User.depots = relationship("Depot", back_populates="user")
 
-class Asset(Base):
+class Asset(Base,CurrencyMixin):
     __tablename__ = "assets"
     
     symbol = Column(String(10),primary_key=True)
@@ -93,13 +96,11 @@ class Asset(Base):
     region = Column(String(100))
     type   = Column(String(20))
     
-    @keywords_with_defaults(sector="other",region="other")
+    @keywords_with_defaults(currency="EUR",sector="other",region="other")
     @required_keywords('symbol','type')
     def __init__(self,**kwargs):
         pass
 
     def __repr__(self):
-        return "<Asset(symbol='%s', type=%s, sector=%s, region=%s)>" % (self.symbol,
-                                                                        self.type,
-                                                                        self.sector,
-                                                                        self.region)
+        return "<Asset(symbol='%s', type=%s, currency=%s, sector=%s, region=%s)>" % \
+                (self.symbol, self.type, self.currency, self.sector, self.region)
