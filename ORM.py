@@ -42,7 +42,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     first_name = Column(String(25))
     last_name = Column(String(25))
-    birthday = Date()
+    birthday = Column(Date())
     
     @required_keywords('first_name','last_name','birthday')
     def __init__(self,**kwargs):
