@@ -84,3 +84,22 @@ class Depot(Base):
         return currency
             
 User.depots = relationship("Depot", back_populates="user")
+
+class Asset(Base):
+    __tablename__ = "assets"
+    
+    symbol = Column(String(10),primary_key=True)
+    sector = Column(String(100))
+    region = Column(String(100))
+    type   = Column(String(20))
+    
+    @keywords_with_defaults(sector="other",region="other")
+    @required_keywords('symbol','type')
+    def __init__(self,**kwargs):
+        pass
+
+    def __repr__(self):
+        return "<Asset(symbol='%s', type=%s, sector=%s, region=%s)>" % (self.symbol,
+                                                                        self.type,
+                                                                        self.sector,
+                                                                        self.region)
