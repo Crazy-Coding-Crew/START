@@ -80,9 +80,3 @@ class Depot(Base):
                 (self.id, self.account, self.institute, self.currency, self.user)
  
 User.depots = relationship("Depot", back_populates="user")
-        
-@event.listens_for(User.depots,'append')
-def my_listener(target,value,initiator):
-    print target
-    print value
-    print initiator
