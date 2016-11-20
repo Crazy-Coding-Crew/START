@@ -44,6 +44,10 @@ class User(Base):
     last_name = Column(String(25))
     birthday = Date()
     
+    @required_keywords('first_name','last_name','birthday')
+    def __init__(self,**kwargs):
+        pass
+
     def __repr__(self):
         return "<User(ID=%s, name='%s %s', birthday=%s)>" % (str(self.id), self.first_name, self.last_name,str(self.birthday))
 
@@ -63,6 +67,10 @@ class Depot(Base):
     def __init__(self,**kwargs):
         pass
         
+    def __repr__(self):
+        return "<Depot(ID=%r, account=%s, institute='%s', currency=%s, user='%r')>" % \
+                (self.id, self.account, self.institute, self.currency, self.user)
+ 
     @validates('account')
     def validate_account(self,key,account):
         account_format = re.compile("\d{4}-\d{4}-\d{4}-\d{4}")
@@ -75,8 +83,4 @@ class Depot(Base):
         assert currency in known_currencies
         return currency
             
-    def __repr__(self):
-        return "<Depot(ID=%r, account=%s, institute='%s', currency=%s, user='%r')>" % \
-                (self.id, self.account, self.institute, self.currency, self.user)
- 
 User.depots = relationship("Depot", back_populates="user")

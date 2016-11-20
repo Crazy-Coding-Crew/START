@@ -18,7 +18,7 @@ def generate_test_db(db_file = "test.db"):
     Jack.depots.append(Depot(institute="UBS",account="8123-9323-2290-3884"))
     session.add(Jack)
     
-    Bibbi = User(first_name="Bibbi", last_name="Blocksberg")
+    Bibbi = User(first_name="Bibbi", last_name="Blocksberg", birthday=date(1992,2,29))
     Bibbi.depots.append(Depot(institute="DAB",account="0000-5000-2311-9827"))
     Bibbi.depots.append(Depot(institute="UBS",account="9123-7341-9552-0199"))
         
