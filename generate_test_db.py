@@ -20,7 +20,7 @@ def generate_test_db(db_file = "test.db"):
     
     Bibbi = User(first_name="Bibbi", last_name="Blocksberg", birthday=date(1992,2,29))
     Bibbi.depots.append(Depot(institute="DAB",account="0000-5000-2311-9827"))
-    Bibbi.depots.append(Depot(institute="UBS",account="9123-7341-9552-0199"))
+    Bibbi.depots.append(Depot(institute="UBS",account="9123-7341-9552-0199",currency="chf"))
     session.add(Bibbi)
     
     google = Asset(symbol="GOOGL",type="stock",sector="technology")
