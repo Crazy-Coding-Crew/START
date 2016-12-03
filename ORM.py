@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, event, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.mapper import validates
@@ -59,7 +59,8 @@ class User(Base):
         pass
 
     def __repr__(self):
-        return "<User(ID=%s, name='%s %s', birthday=%s)>" % (str(self.id), self.first_name, self.last_name,str(self.birthday))
+        return "<User(ID=%r, name='%s %s', birthday=%s, depots=%d)>" % \
+                (self.id, self.first_name, self.last_name,str(self.birthday),len(self.depots))
 
 class Depot(Base,CurrencyMixin):
     __tablename__ = 'depots'
@@ -104,3 +105,28 @@ class Asset(Base,CurrencyMixin):
     def __repr__(self):
         return "<Asset(symbol='%s', type=%s, currency=%s, sector=%s, region=%s)>" % \
                 (self.symbol, self.type, self.currency, self.sector, self.region)
+
+class Tick(Base):
+    __tablename__ = "ticks"
+    
+    open = Column(Float)
+    high = Column(Float)
+    low = Column(Float)
+    close = Column(Float)
+    volume = Column(Integer)
+    timestamp = Column(DateTime,primary_key=True)
+    asset_symbol = Column(String(10),ForeignKey('assets.symbol'),primary_key=True)
+    
+    asset = relationship("Asset", back_populates="ticks")
+    
+    @keywords_with_defaults(volume=1)
+    @required_keywords('open','timestamp')
+    def __init__(self,**kwargs):
+        pass
+
+    def __repr__(self):
+        return "<Tick(symbol='%s', %s: open=%.3f, high=%.3f, low=%.3f, close=%.3f %s, volume=%d)>" % \
+                (self.asset.symbol, str(self.timestamp), self.open, self.high, self.low, self.close, self.asset.currency, self.volume)
+
+Asset.ticks = relationship("Tick", back_populates="asset")
+    
